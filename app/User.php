@@ -19,6 +19,10 @@ class User extends Model implements
      *
      * @var array
      */
+    
+    public static $rules = ["name"=>'required|unique:users,name',
+        "email"=>'required|unique:users|email'];
+    
     protected $fillable = [
         'name', 'email',
     ];
@@ -31,4 +35,6 @@ class User extends Model implements
     protected $hidden = [
         'password',
     ];
+    
+    
 }

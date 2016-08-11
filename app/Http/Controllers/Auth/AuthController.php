@@ -8,10 +8,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Http\Controllers\ApiControllerTrait;
+use App\User as User;
 use Illuminate\Http\Exception\HttpResponseException;
 
-use Illuminate\Support\Facades\Hash;
+
+use Illuminate\Support\Facades\Validator;
+use League\Flysystem\Exception;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,6 +29,8 @@ class AuthController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
+    use ApiControllerTrait;
+
     public function postLogin(Request $request)
     {
         try
@@ -78,10 +83,27 @@ class AuthController extends Controller
     }
 
     public function postSignup(Request $request){
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = Hash::make('');
 
+        try {
+            $validator = Validator::make($request->all(), User::$rules);
+            if ($validator->fails()) {
+                return $this->error($validator->errors());
+            }
+            try{
+                User::query()->where('name', $request->input('name'))->firstOrFail();    
+            }catch (ModelNotFoundException $ex){
+                throw new 
+            }
+            
+            $user = new User();
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->password = \Hash::make($request->input('password'));
+            $user->save();
+            return $this->respond($user);
+        } catch (Exception $e) {
+            $this->error([''])
+        }
     }
+
 }

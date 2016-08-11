@@ -14,5 +14,12 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+//$globalPath = 'api/';
 
-$app->post('auth/login', 'App\Http\Controllers\Auth\AuthController@postLogin');
+//$app->post($globalPath.'auth/login', 'App\Http\Controllers\Auth\AuthController@postLogin');
+//$app->post($globalPath.'user', 'App\Http\Controllers\UserController@getUser');
+
+$app->group(['prefix' => 'api'], function () use ($app) {
+    $app->get('users', 'App\Http\Controllers\UserController@getUser');
+    $app->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
+});
