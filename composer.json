@@ -8,16 +8,20 @@
         "php": ">=5.5.9",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-		"tymon/jwt-auth": "0.5.9",
+        "tymon/jwt-auth": "^0.5.9",
 		"basicit/lumen-vendor-publish": "1.0.3",
         "vluzrmos/tinker": "1.1.*",
         "barryvdh/laravel-ide-helper": "^2.1",
-        "doctrine/dbal": "~2.3"
+        "doctrine/dbal": "~2.3",
+        "illuminate/routing": "^5.2",
+        "illuminate/hashing": "^5.2",
+        "dingo/api": "1.0.x@dev"
 
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.0",
+        "symfony/var-dumper": "^3.0"
     },
     "autoload": {
         "psr-4": {

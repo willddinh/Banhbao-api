@@ -22,4 +22,18 @@ $app->get('/', function () use ($app) {
 $app->group(['prefix' => 'api'], function () use ($app) {
     $app->get('users', 'App\Http\Controllers\UserController@getUser');
     $app->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
+    $app->post('login', 'App\Http\Controllers\Auth\AuthController@postLogin');
 });
+
+
+/*$app->group(['prefix' => 'projects', 'middleware' => 'jwt.auth'], function($app) {
+    $app->post('/', 'App\Http\Controllers\ProjectsController@store');
+    $app->put('/{projectId}', 'App\Http\Controllers\ProjectsController@update');
+    $app->delete('/{projectId}', 'App\Http\Controllers\ProjectsController@destroy');
+});
+
+$app->group(['prefix' => 'projects'], function ($app)
+{
+    $app->get('/', 'App\Http\Controllers\ProjectsController@index');
+    $app->get('/{projectId}', 'App\Http\Controllers\ProjectsController@show');
+});*/

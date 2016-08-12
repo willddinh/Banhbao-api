@@ -27,9 +27,15 @@ $app = new Laravel\Lumen\Application(
 
 class_alias('Illuminate\Support\Facades\Hash', 'Hash');
 class_alias('Illuminate\Support\Facades\Config', 'Config');
+class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');
+class_alias('Tymon\JWTAuth\Facades\JWTFactory', 'JWTFactory');
 
  $app->withEloquent();
  $app->configure('jwt');
+
+
+$app->alias('cache', 'Illuminate\Cache\CacheManager');
+$app->alias('auth', 'Illuminate\Auth\AuthManager');
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -93,6 +99,8 @@ $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
 $app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -107,5 +115,15 @@ $app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
     require __DIR__.'/../app/Http/routes.php';
 });
+
+
+$app->configureMonologUsing(function(Monolog\Logger $monolog) {
+
+    $handler = (new \Monolog\Handler\StreamHandler(storage_path('/logs/xyz.log')))
+        ->setFormatter(new \Monolog\Formatter\LineFormatter(null, null, true, true));
+
+    return $monolog->pushHandler($handler);
+});
+
 
 return $app;

@@ -8,18 +8,22 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\BusinessException;
 use App\Http\Controllers\ApiControllerTrait;
 use App\User as User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exception\HttpResponseException;
 
 
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
+use Log;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as IlluminateResponse;
-use Tymon\JWTAuth\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class AuthController extends Controller
 {
@@ -84,16 +88,17 @@ class AuthController extends Controller
 
     public function postSignup(Request $request){
 
+        Log::addInfo("hello world");
         try {
             $validator = Validator::make($request->all(), User::$rules);
             if ($validator->fails()) {
                 return $this->error($validator->errors());
             }
-            try{
+            /*try{
                 User::query()->where('name', $request->input('name'))->firstOrFail();    
             }catch (ModelNotFoundException $ex){
-                throw new 
-            }
+                throw new BusinessException($ex->getMessage());
+            }*/
             
             $user = new User();
             $user->name = $request->input('name');
@@ -102,7 +107,8 @@ class AuthController extends Controller
             $user->save();
             return $this->respond($user);
         } catch (Exception $e) {
-            $this->error([''])
+            Log::critical($e->getMessage());
+            return $this->error([$e->getMessage()]);
         }
     }
 
