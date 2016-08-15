@@ -19,11 +19,21 @@ $app->get('/', function () use ($app) {
 //$app->post($globalPath.'auth/login', 'App\Http\Controllers\Auth\AuthController@postLogin');
 //$app->post($globalPath.'user', 'App\Http\Controllers\UserController@getUser');
 
-$app->group(['prefix' => 'api'], function () use ($app) {
+$api = app('Dingo\Api\Routing\Router');
+
+$api->version('v1', function ($api) {
+    $api->get('users', 'App\Http\Controllers\UserController@getUser');
+    $api->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
+    $api->post('register', 'App\Http\Controllers\Auth\AuthController@register');
+    $api->post('login', 'App\Http\Controllers\Auth\AuthController@postLogin');
+});
+
+/*$app->group(['prefix' => 'api'], function () use ($app) {
     $app->get('users', 'App\Http\Controllers\UserController@getUser');
     $app->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
+    $app->post('register', 'App\Http\Controllers\Auth\AuthController@register');
     $app->post('login', 'App\Http\Controllers\Auth\AuthController@postLogin');
-});
+});*/
 
 
 /*$app->group(['prefix' => 'projects', 'middleware' => 'jwt.auth'], function($app) {

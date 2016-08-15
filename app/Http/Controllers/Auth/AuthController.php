@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\BusinessException;
 use App\Http\Controllers\ApiControllerTrait;
 use App\User as User;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exception\HttpResponseException;
 
@@ -34,6 +35,12 @@ class AuthController extends Controller
      * @return \Illuminate\Http\Response
      */
     use ApiControllerTrait;
+    protected $auth;
+    public function __construct(AuthManager $auth)
+    {
+
+        $this->auth = $auth;
+    }
 
     public function postLogin(Request $request)
     {
@@ -110,6 +117,40 @@ class AuthController extends Controller
             Log::critical($e->getMessage());
             return $this->error([$e->getMessage()]);
         }
+    }
+
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->input(), [
+            'email' => 'required|email|unique:users',
+            'password' => 'required',
+        ]);
+
+//        if ($validator->fails()) {
+//            return $this->error($validator->messages());
+//        }
+
+//        $email = $request->get('email');
+//        $password = $request->get('password');
+
+//        $attributes = [
+//            'email' => $email,
+//            'password' => app('hash')->make($password),
+//        ];
+
+//        $user = $this->userRepository->create($attributes);
+
+        $user = new User();
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = \Hash::make($request->input('password'));
+        $user->save();
+
+        // 用户注册事件
+        $token = $this->auth->fromUser($user);
+
+        return response()->json(compact('token'));
     }
 
 }
