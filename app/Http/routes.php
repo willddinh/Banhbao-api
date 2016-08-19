@@ -23,27 +23,18 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
     $api->get('users', 'App\Http\Controllers\UserController@getUser');
-    $api->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
-    $api->post('register', 'App\Http\Controllers\Auth\AuthController@register');
-    $api->post('login', 'App\Http\Controllers\Auth\AuthController@postLogin');
+    $api->post('signup', 'App\Http\Controllers\Auth\AuthController@signup');
+    $api->post('login', 'App\Http\Controllers\Auth\AuthController@login');
+    $api->post('token/refresh', 'App\Http\Controllers\Auth\AuthController@refreshToken');
+    // need authentication
+    $api->group(['middleware' => 'api.auth'], function ($api) {
+
+        //dump
+        $api->get('dump', [
+            'as' => 'dump.index',
+            'uses' => 'App\Http\Controllers\DumpController@index',
+        ]);
+        
+        
+    });
 });
-
-/*$app->group(['prefix' => 'api'], function () use ($app) {
-    $app->get('users', 'App\Http\Controllers\UserController@getUser');
-    $app->post('signup', 'App\Http\Controllers\Auth\AuthController@postSignup');
-    $app->post('register', 'App\Http\Controllers\Auth\AuthController@register');
-    $app->post('login', 'App\Http\Controllers\Auth\AuthController@postLogin');
-});*/
-
-
-/*$app->group(['prefix' => 'projects', 'middleware' => 'jwt.auth'], function($app) {
-    $app->post('/', 'App\Http\Controllers\ProjectsController@store');
-    $app->put('/{projectId}', 'App\Http\Controllers\ProjectsController@update');
-    $app->delete('/{projectId}', 'App\Http\Controllers\ProjectsController@destroy');
-});
-
-$app->group(['prefix' => 'projects'], function ($app)
-{
-    $app->get('/', 'App\Http\Controllers\ProjectsController@index');
-    $app->get('/{projectId}', 'App\Http\Controllers\ProjectsController@show');
-});*/

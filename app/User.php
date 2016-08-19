@@ -22,7 +22,8 @@ class User extends Model implements
      */
     
     public static $rules = ["name"=>'required|unique:users,name',
-        "email"=>'required|unique:users|email'];
+        "email"=>'required|unique:users|email',
+        "password"=>'required'];
     
     protected $fillable = [
         'name', 'email',

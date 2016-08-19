@@ -8,22 +8,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\BusinessException;
 use App\Http\Controllers\ApiControllerTrait;
 use App\User as User;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Exception\HttpResponseException;
 
 
 use Illuminate\Support\Facades\Validator;
+use Laravel\Lumen\Routing\Controller;
 use League\Flysystem\Exception;
 use Log;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response as IlluminateResponse;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class AuthController extends Controller
@@ -42,44 +36,24 @@ class AuthController extends Controller
         $this->auth = $auth;
     }
 
-    public function postLogin(Request $request)
+    public function login(Request $request)
     {
-        try
-        {
-            $this->validate($request, [
-                'email' => 'required|email|max:255', 'password' => 'required',
-            ]);
-        }
-        catch (HttpResponseException $e)
-        {
-            return response()->json([
-                'error' => [
-                    'message'     => 'Invalid auth',
-                    'status_code' => IlluminateResponse::HTTP_BAD_REQUEST
-                ]],
-                IlluminateResponse::HTTP_BAD_REQUEST,
-                $headers = []
-            );
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors());
         }
 
-        $credentials = $this->getCredentials($request);
+        $credentials = $request->only('email', 'password');
 
-        try
-        {
-            // attempt to verify the credentials and create a token for the user
-            if ( ! $token = JWTAuth::attempt($credentials))
-            {
-                return response()->json(['error' => 'invalid_credentials'], 401);
-            }
-        }
-        catch (JWTException $e)
-        {
-            // something went wrong whilst attempting to encode the token
-            return response()->json(['error' => 'could_not_create_token'], 500);
+        if (! $token = $this->auth->attempt($credentials)) {
+            $this->respond(trans('auth.incorrect'));
         }
 
-        // all good so return the token
-        return response()->json(compact('token'));
+        return $this->respond(compact('token'));
     }
 
     /**
@@ -93,20 +67,13 @@ class AuthController extends Controller
         return $request->only('email', 'password');
     }
 
-    public function postSignup(Request $request){
+    public function signup(Request $request){
 
-        Log::addInfo("hello world");
         try {
             $validator = Validator::make($request->all(), User::$rules);
             if ($validator->fails()) {
                 return $this->error($validator->errors());
             }
-            /*try{
-                User::query()->where('name', $request->input('name'))->firstOrFail();    
-            }catch (ModelNotFoundException $ex){
-                throw new BusinessException($ex->getMessage());
-            }*/
-            
             $user = new User();
             $user->name = $request->input('name');
             $user->email = $request->input('email');
@@ -120,37 +87,28 @@ class AuthController extends Controller
     }
 
 
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->input(), [
-            'email' => 'required|email|unique:users',
-            'password' => 'required',
-        ]);
-
-//        if ($validator->fails()) {
-//            return $this->error($validator->messages());
-//        }
-
-//        $email = $request->get('email');
-//        $password = $request->get('password');
-
-//        $attributes = [
-//            'email' => $email,
-//            'password' => app('hash')->make($password),
-//        ];
-
-//        $user = $this->userRepository->create($attributes);
-
-        $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = \Hash::make($request->input('password'));
-        $user->save();
-
-        // 用户注册事件
-        $token = $this->auth->fromUser($user);
-
-        return response()->json(compact('token'));
+    /**
+     * @api {post} /token/refresh 
+     * @apiDescription refresh token
+     * @apiGroup Auth
+     * @apiPermission JWT
+     * @apiVersion 0.1.0
+     * @apiHeader {String} Authorization 
+     * @apiHeaderExample {json} Header-Example:
+     *     {
+     *       "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL21vYmlsZS5kZWZhcmEuY29tXC9hdXRoXC90b2tlbiIsImlhdCI6IjE0NDU0MjY0MTAiLCJleHAiOiIxNDQ1NjQyNDIxIiwibmJmIjoiMTQ0NTQyNjQyMSIsImp0aSI6Ijk3OTRjMTljYTk1NTdkNDQyYzBiMzk0ZjI2N2QzMTMxIn0.9UPMTxo3_PudxTWldsf4ag0PHq1rK8yO9e5vqdwRZLY"
+     *     }
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *         token: 9UPMTxo3_PudxTWldsf4ag0PHq1rK8yO9e5vqdwRZLY.eyJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL21vYmlsZS5kZWZhcmEuY29tXC9hdXRoXC90b2tlbiIsImlhdCI6IjE0NDU0MjY0MTAiLCJleHAiOiIxNDQ1NjQyNDIxIiwibmJmIjoiMTQ0NTQyNjQyMSIsImp0aSI6Ijk3OTRjMTljYTk1NTdkNDQyYzBiMzk0ZjI2N2QzMTMxIn0.eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+     *     }
+     */
+    public function refreshToken(){
+        $token = $this->auth->refresh();
+        return $this->respond(compact('token'));
     }
+
+   
 
 }
