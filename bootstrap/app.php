@@ -101,8 +101,10 @@ $app->routeMiddleware([
 |
 */
 
- $app->register(App\Providers\AppServiceProvider::class);
- $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider::class);
+class_alias('Mcamara\LaravelLocalization\Facades\LaravelLocalization', 'LaravelLocalization');
 // $app->register(App\Providers\EventServiceProvider::class);
 //$app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);

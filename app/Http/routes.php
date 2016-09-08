@@ -10,10 +10,20 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$languages = LaravelLocalization::getSupportedLocales();
+foreach ($languages as $language => $values) {
+    $supportedLocales[] = $language;
+}
 
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$locale = Request::header("location");
+if (in_array($locale, $supportedLocales)) {
+    LaravelLocalization::setLocale($locale);
+    App::setLocale($locale);
+}
 //$globalPath = 'api/';
 
 //$app->post($globalPath.'auth/login', 'App\Http\Controllers\Auth\AuthController@postLogin');

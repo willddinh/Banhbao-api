@@ -20,6 +20,7 @@ class DumpController extends BaseController
 
     public function index(Request $request){
         $user = $this->auth->user();
-        return $this->respond(compact('user'));
+        $currentLocale = LaravelLocalization::getCurrentLocale();
+        return $this->respond(compact('user', 'currentLocale'));
     }
 }
