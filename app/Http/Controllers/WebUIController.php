@@ -13,13 +13,17 @@ class DumpController extends BaseController
     use ApiControllerTrait;
 
     protected $auth;
+    protected 
     
     public function __construct(AuthManager $auth)
     {
-
         $this->auth = $auth;
     }
 
+
+    public function menu($group){
+
+    }
 
     public function index(Request $request){
         $user = $this->auth->user();

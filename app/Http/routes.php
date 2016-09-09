@@ -10,20 +10,29 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$languages = LaravelLocalization::getSupportedLocales();
+/*$languages = LaravelLocalization::getSupportedLocales();
 foreach ($languages as $language => $values) {
     $supportedLocales[] = $language;
-}
+}*/
 
 $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+
 $locale = Request::header("location");
+if(!$locale)
+    $locale = 'vn';
+
+$tran = app('translator');
+$tran->setlocale($locale);
+
+
+/*
 if (in_array($locale, $supportedLocales)) {
     LaravelLocalization::setLocale($locale);
     App::setLocale($locale);
-}
+}*/
 //$globalPath = 'api/';
 
 //$app->post($globalPath.'auth/login', 'App\Http\Controllers\Auth\AuthController@postLogin');
@@ -36,6 +45,10 @@ $api->version('v1', function ($api) {
     $api->post('signup', 'App\Http\Controllers\Auth\AuthController@signup');
     $api->post('login', 'App\Http\Controllers\Auth\AuthController@login');
     $api->post('token/refresh', 'App\Http\Controllers\Auth\AuthController@refreshToken');
+    //for web ui
+    
+    $api->get('/ui/menu/{group}','App\Http\Controllers\WebUIController@menu');
+    
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {
 

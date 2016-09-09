@@ -27,6 +27,9 @@ $app = new Laravel\Lumen\Application(
 
 class_alias('Illuminate\Support\Facades\Hash', 'Hash');
 class_alias('Illuminate\Support\Facades\Config', 'Config');
+class_alias('Illuminate\Support\Facades\Request', 'Request');
+
+
 //class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');
 //class_alias('Tymon\JWTAuth\Facades\JWTFactory', 'JWTFactory');
 
@@ -103,11 +106,12 @@ $app->routeMiddleware([
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
-$app->register(Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider::class);
-class_alias('Mcamara\LaravelLocalization\Facades\LaravelLocalization', 'LaravelLocalization');
+
 // $app->register(App\Providers\EventServiceProvider::class);
 //$app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+
+
 
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
 $app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');

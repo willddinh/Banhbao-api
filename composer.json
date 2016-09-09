@@ -8,7 +8,6 @@
         "php": ">=5.5.9",
         "laravel/lumen-framework": "5.2.*",
         "vlucas/phpdotenv": "~2.2",
-        "mcamara/laravel-localization": "1.0.*",
         "tymon/jwt-auth": "^1.0@dev",
         "guzzlehttp/guzzle": "~6.0",
 		"basicit/lumen-vendor-publish": "1.0.3",
