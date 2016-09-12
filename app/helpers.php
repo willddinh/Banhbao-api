@@ -63,4 +63,9 @@ if (! function_exists('trans')) {
 
         return app('translator')->trans($id, $parameters, $domain, $locale);
     }
+
+    function getLang(){
+        $tran = app('translator');
+        return $tran->getlocale();
+    }
 }
