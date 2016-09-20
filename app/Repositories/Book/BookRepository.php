@@ -5,6 +5,7 @@ namespace App\Repositories\Book;
 use App\Models\Author;
 use App\Models\Entity;
 use App\Models\Book;
+use DB;
 use Illuminate\Support\Facades\Config;
 use App\Models\Publisher;
 use App\Models\SubCategory;
@@ -415,4 +416,107 @@ class BookRepository extends RepositoryAbstract implements BookInterface, Crudab
     }
 
 
+    public function getBySubCat($subCatId = null)
+    {
+        if($subCatId){
+            $subCat = SubCategory::find($subCatId);
+            if($subCat){
+                $tabData = DB::table("books")->join('entity', 'books.entity_id', '=', 'entity.id' )
+                    ->join('entity_categories', 'entity.id', '=', 'entity_categories.entity_id')
+                    ->join('sub_categories', 'entity_categories.sub_category_id', '=', 'sub_categories.id')
+                    ->where('books.lang', getLang())
+                    ->whereNull('books.deleted_at')
+                    ->where('books.is_published', '=', 1)
+                    ->where('sub_categories.id', '=', $subCatId)
+                    ->select('books.*','entity.title', 'entity.price', 'sub_categories.title as subCatName')->get();
+                return ["tabName"=>$subCat->title, "tabContent"=>$tabData];
+            }
+            return [];
+
+            /*return $this->book->query()->with(['entity.subCategories' => function ($query) use ($subCatId){
+                $query->where('sub_categories.id', $subCatId);
+            }])->where('lang', $this->getLang())->get();*/
+        }else{
+            /*$allBooks =  $this->book->query()->with(['entity.subCategories' => function ($query){
+                $query->orderBy('sub_categories.id');
+            }])->where('lang', $this->getLang())->whereHas('entity.subCategories')-> get();*/
+
+            $result = [];
+            $allBookSubCat = $this->getByAllSubCat();
+            if($allBookSubCat){
+                foreach ($allBookSubCat as $subCat){
+                    $tabData = DB::table("books")->join('entity', 'books.entity_id', '=', 'entity.id' )
+                        ->join('entity_categories', 'entity.id', '=', 'entity_categories.entity_id')
+                        ->join('sub_categories', 'entity_categories.sub_category_id', '=', 'sub_categories.id')
+                        ->where('books.lang', getLang())
+                        ->whereNull('books.deleted_at')
+                        ->where('books.is_published', '=', 1)
+                        ->where('sub_categories.id', '=', $subCat->id)
+                        ->select('books.*','entity.title', 'entity.price', 'sub_categories.title as subCatName')->get();
+                    array_push($result, ["tabName"=>$subCat->title, "tabContent"=>$tabData]);
+                }
+
+                return $result;
+            }
+            return [];
+
+            /*DB::table("books")->join('entity', 'books.entity_id', '=', 'entity.id' )
+                ->join('entity_categories', 'entity.id', '=', 'entity_categories.entity_id')
+                ->join('sub_categories', 'entity_categories.sub_category_id', '=', 'sub_categories.id')
+                ->select('books.*','entity.title', 'entity.price', 'sub_categories.title as subCatName')->get();*/
+        }
+    }
+
+    public function  getByAllSubCat(){
+        return SubCategory::query()->where('lang', getLang())->where('group', Config::get('common.const.SUBCATEGORY_BOOK'))->get();
+    }
+
+
+    public function listBook($publisherId, $categoryId, $subCategoriesIdArr, $priceOrder, $page)
+    {
+        $limit = Config::get("common.webUI.book.pageSize");
+        $result = new \StdClass();
+        $result->page = $page;
+        $result->limit = $limit;
+        $result->totalItems = 0;
+        $result->items = array();
+
+        $queryBuilder  = DB::table("books")->join('entity', 'books.entity_id', '=', 'entity.id' )
+            ->leftJoin('entity_categories', 'entity.id', '=', 'entity_categories.entity_id')
+          //  ->leftJoin('sub_categories', 'entity_categories.sub_category_id', '=', 'sub_categories.id')
+            ->leftJoin('authors', 'books.author_id', '=', 'authors.id')
+            ->where('books.lang', getLang())
+            ->whereNull('books.deleted_at')
+            ->where('books.is_published', '=', 1);
+
+        if($publisherId && $publisherId > 0)
+            $queryBuilder->where('books.publisher_id', '=', $publisherId);
+        if($categoryId && $categoryId > 0)
+            $queryBuilder->where('books.category_id', '=', $categoryId);
+        if($priceOrder)
+            $queryBuilder->orderBy('price', $priceOrder);
+        else
+            $queryBuilder->orderBy('books.id', 'desc');
+        if(count($subCategoriesIdArr) > 0)
+            $queryBuilder->whereIn('entity_categories.sub_category_id', $subCategoriesIdArr);
+
+
+        $queryBuilder->select('books.id','books.rent_price', 'books.path','entity.title', 'entity.price', 'authors.name as author');
+        $result->totalItems = $this->totalListBook($queryBuilder);
+        $books = $queryBuilder->skip($limit * ($page - 1))->take($limit)->get();
+
+        $result->items = $books;
+        return json_encode($result);
+
+    }
+
+    private function totalListBook($queryBuilder)
+    {
+        return $queryBuilder->distinct()->count('books.id');
+    }
+
+    public function getBookById($id)
+    {
+        return $this->book->query()->with(['entity.tags', 'entity.subCategories', 'category', 'author', 'publisher', 'rates'])->find($id);
+    }
 }

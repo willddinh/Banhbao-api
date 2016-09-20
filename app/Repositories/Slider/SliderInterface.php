@@ -15,4 +15,6 @@ interface SliderInterface
      * @return mixed
      */
     public function all();
+
+    public function getSliderForHome();
 }

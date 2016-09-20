@@ -35,7 +35,8 @@ class_alias('Illuminate\Support\Facades\Request', 'Request');
 
  $app->withEloquent();
  $app->configure('jwt');
-
+ $app->configure('common');
+ $app->configure('fully');
 
 //$app->alias('cache', 'Illuminate\Cache\CacheManager');
 //$app->alias('auth', 'Illuminate\Auth\AuthManager');
@@ -80,9 +81,11 @@ $app->singleton(
 // ]);
 
 
-/*$app->middleware([
-    App\Http\Middleware\Cors::class,
-]);*/
+$app->middleware([
+    Vluzrmos\LumenCors\CorsMiddleware::class,
+]);
+
+//'Vluzrmos\LumenCors\CorsMiddleware'
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,

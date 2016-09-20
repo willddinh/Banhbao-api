@@ -17,7 +17,8 @@
         "illuminate/routing": "^5.2",
         "illuminate/hashing": "^5.2",
         "dingo/api": "1.0.x@dev",
-        "cviebrock/eloquent-sluggable": "^3.1"
+        "cviebrock/eloquent-sluggable": "^3.1",
+        "vluzrmos/lumen-cors": "2.1.*"
 
     },
     "require-dev": {

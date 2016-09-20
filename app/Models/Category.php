@@ -48,6 +48,6 @@ class Category extends Model implements ModelInterface, SluggableInterface
 
     public function getUrlAttribute()
     {
-        return 'category/'.$this->attributes['slug'];
+        return $this->group.'/'.$this->attributes['slug'];
     }
 }

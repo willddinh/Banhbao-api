@@ -48,6 +48,14 @@ $api->version('v1', function ($api) {
     //for web ui
     
     $api->get('ui/menu/{group}','App\Http\Controllers\WebUIController@menu');
+    $api->get('ui/slider','App\Http\Controllers\WebUIController@slider');
+
+    $api->get('book/getBySubCat/{subCatId?}','App\Http\Controllers\BookController@getBySubCat');
+    $api->get('book/getCategories','App\Http\Controllers\BookController@getCategories');
+    $api->get('book/getPublishers','App\Http\Controllers\BookController@getPublisher');
+    $api->get('book/getSubCats','App\Http\Controllers\BookController@getBookSubCats');
+    $api->get('book/list','App\Http\Controllers\BookController@listBooks');
+    $api->get('book/detail/{id}','App\Http\Controllers\BookController@detail');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {

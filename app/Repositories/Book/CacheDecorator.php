@@ -132,4 +132,19 @@ class CacheDecorator extends AbstractBookDecorator
 
         return $books;
     }
+
+    public function getBySubCat($subCatId)
+    {
+       return $this->book->getBySubCat($subCatId);
+    }
+
+    public function listBook($publisherId, $categoryId, $subCategoriesIdArr, $priceOrder,$page)
+    {
+        return $this->book->listBook($publisherId, $categoryId, $subCategoriesIdArr, $priceOrder, $page);
+    }
+
+    public function getBookById($id)
+    {
+        return $this->book->getBookById($id);
+    }
 }

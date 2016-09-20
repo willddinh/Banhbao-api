@@ -13,4 +13,10 @@ interface BookInterface extends RepositoryInterface
      * @return mixed
      */
     public function getBySlug($slug);
+
+    public function getBySubCat($subCatId);
+
+    public function listBook($publisherId, $categoryId, $subCategoriesIdArr, $priceOrder, $page);
+
+    public function getBookById($id);
 }

@@ -50,4 +50,9 @@ class CacheDecorator extends AbstractSliderDecorator
 
         return $sliders;
     }
+
+    public function getSliderForHome()
+    {
+        return $this->slider->getSliderForHome();
+    }
 }
