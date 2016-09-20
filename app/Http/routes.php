@@ -22,7 +22,7 @@ $app->get('/', function () use ($app) {
 
 $locale = Request::header("location");
 if(!$locale)
-    $locale = 'vn';
+    $locale = 'vi';
 
 $tran = app('translator');
 $tran->setlocale($locale);
@@ -47,7 +47,7 @@ $api->version('v1', function ($api) {
     $api->post('token/refresh', 'App\Http\Controllers\Auth\AuthController@refreshToken');
     //for web ui
     
-    $api->get('/ui/menu/{group}','App\Http\Controllers\WebUIController@menu');
+    $api->get('ui/menu/{group}','App\Http\Controllers\WebUIController@menu');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {

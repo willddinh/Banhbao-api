@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\Models\Menu;
+use App\Repositories\Menu\MenuInterface;
 use Illuminate\Auth\AuthManager;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
@@ -13,18 +13,23 @@ class WebUIController extends BaseController
 
     protected $auth;
     /**
-     * @var Menu
+     * @var MenuInterface
      */
-    protected $menu;
+    protected $menuRepo;
 
-    public function __construct(AuthManager $auth, Menu $menu)
+    public function __construct(AuthManager $auth, MenuInterface $menuRepo)
     {
         $this->auth = $auth;
-        $this->menu = $menu;
+        $this->menuRepo = $menuRepo;
     }
 
+    /*public function menu($group){
+        $menu = $this->menuRepo->menu->query()->where(['lang'=> getLang(), 'mnugroup'=>$group])->orderBy('order', 'desc')->get();
+        return $menu;
+    }*/
+
     public function menu($group){
-        $menu = $this->menu->query()->where(['lang'=> getLang(), 'mnugroup'=>$group])->orderBy('order', 'desc')->get();
+        $menu = $this->menuRepo->getMenuByGroup($group);
         return $menu;
     }
 

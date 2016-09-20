@@ -111,6 +111,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 //$app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
+$app->register(App\Providers\RepositoryServiceProvider::class);
+
 
 
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
@@ -153,4 +155,9 @@ $app->configureMonologUsing(function(Monolog\Logger $monolog) {
 });
 
 
+\DB::listen(function($sql) {
+    Log::info($sql->sql);
+    Log::info(implode("|",$sql->bindings));
+    Log::info($sql->time);
+});
 return $app;

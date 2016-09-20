@@ -119,7 +119,7 @@ class PageRepository extends RepositoryAbstract implements PageInterface, Crudab
      *
      * @return bool|mixed
      *
-     * @throws \Fully\Exceptions\Validation\ValidationException
+     * @throws \App\Exceptions\Validation\ValidationException
      */
     public function create($attributes)
     {
@@ -141,7 +141,7 @@ class PageRepository extends RepositoryAbstract implements PageInterface, Crudab
      *
      * @return bool|mixed
      *
-     * @throws \Fully\Exceptions\Validation\ValidationException
+     * @throws \App\Exceptions\Validation\ValidationException
      */
     public function update($id, $attributes)
     {
