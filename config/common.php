@@ -17,7 +17,7 @@ return [
         "SUBCATEGORY_FASHION"=>"fashion",],
     "webUI"=>[
         "book"=>[
-            "pageSize"=>16
+            "pageSize"=>20
         ]
     ]
 
