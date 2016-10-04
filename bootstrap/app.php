@@ -37,6 +37,7 @@ class_alias('Illuminate\Support\Facades\Request', 'Request');
  $app->configure('jwt');
  $app->configure('common');
  $app->configure('fully');
+$app->configure('elasticsearch');
 
 //$app->alias('cache', 'Illuminate\Cache\CacheManager');
 //$app->alias('auth', 'Illuminate\Auth\AuthManager');
@@ -115,6 +116,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
 $app->register(App\Providers\RepositoryServiceProvider::class);
+$app->register(Cviebrock\LaravelElasticsearch\LumenServiceProvider::class);
+$app->register(Websight\GcsProvider\CloudStorageServiceProvider::class);
 
 
 

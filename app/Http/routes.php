@@ -41,6 +41,7 @@ if (in_array($locale, $supportedLocales)) {
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+    $api->post('search/book/autocomplete/{text}', 'App\Http\Controllers\SearchController@booksAutoComplete');
     $api->get('users', 'App\Http\Controllers\UserController@getUser');
     $api->post('signup', 'App\Http\Controllers\Auth\AuthController@signup');
     $api->post('login', 'App\Http\Controllers\Auth\AuthController@login');

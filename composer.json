@@ -18,7 +18,10 @@
         "illuminate/hashing": "^5.2",
         "dingo/api": "1.0.x@dev",
         "cviebrock/eloquent-sluggable": "^3.1",
-        "vluzrmos/lumen-cors": "2.1.*"
+        "vluzrmos/lumen-cors": "2.1.*",
+        "cviebrock/laravel-elasticsearch": "^1.2",
+        "websight/l5-google-cloud-storage": "^1.1",
+        "league/flysystem": " ~1.0"
 
     },
     "require-dev": {
