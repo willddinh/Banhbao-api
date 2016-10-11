@@ -20,8 +20,8 @@
         "cviebrock/eloquent-sluggable": "^3.1",
         "vluzrmos/lumen-cors": "2.1.*",
         "cviebrock/laravel-elasticsearch": "^1.2",
-        "websight/l5-google-cloud-storage": "^1.1",
-        "league/flysystem": " ~1.0"
+        "league/flysystem": " ~1.0",
+        "nesbot/carbon": "^1.21"
 
     },
     "require-dev": {

@@ -44,6 +44,7 @@ $api->version('v1', function ($api) {
     $api->post('search/book/autocomplete/{text}', 'App\Http\Controllers\SearchController@booksAutoComplete');
     $api->get('users', 'App\Http\Controllers\UserController@getUser');
     $api->post('signup', 'App\Http\Controllers\Auth\AuthController@signup');
+    $api->post('facebook', 'App\Http\Controllers\Auth\AuthController@facebook');
     $api->post('login', 'App\Http\Controllers\Auth\AuthController@login');
     $api->post('token/refresh', 'App\Http\Controllers\Auth\AuthController@refreshToken');
     //for web ui
@@ -57,6 +58,7 @@ $api->version('v1', function ($api) {
     $api->get('book/getSubCats','App\Http\Controllers\BookController@getBookSubCats');
     $api->get('book/list','App\Http\Controllers\BookController@listBooks');
     $api->get('book/detail/{id}','App\Http\Controllers\BookController@detail');
+    $api->get('payment/pay-list','App\Http\Controllers\PaymentController@payList');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {
@@ -65,6 +67,12 @@ $api->version('v1', function ($api) {
         $api->get('dump', [
             'as' => 'dump.index',
             'uses' => 'App\Http\Controllers\DumpController@index',
+        ]);
+        //payment
+
+        $api->post('payment/pay', [
+            'as' => 'payment.pay',
+            'uses' => 'App\Http\Controllers\PaymentController@pay',
         ]);
         
         

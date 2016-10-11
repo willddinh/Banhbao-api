@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiControllerTrait;
 use App\User as User;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 
 
@@ -18,7 +19,7 @@ use Laravel\Lumen\Routing\Controller;
 use League\Flysystem\Exception;
 use Log;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response as IlluminateResponse;
 
 class AuthController extends Controller
 {
@@ -80,6 +81,52 @@ class AuthController extends Controller
             $user->password = \Hash::make($request->input('password'));
             $user->save();
             return $this->respond($user);
+        } catch (Exception $e) {
+            Log::critical($e->getMessage());
+            return $this->error([$e->getMessage()]);
+        }
+    }
+
+    public function facebook(Request $request){
+
+        try {
+
+            $accessToken = $request->input("token");
+
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => 'https://graph.facebook.com/me?access_token='.$accessToken
+            ));
+            $result = curl_exec($curl);
+            $facebookArr = json_decode($result, true);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+            //@todo: check in db if user not exist -> create new else retrieve user infor by facebook id
+            if(IlluminateResponse::HTTP_OK == $httpcode){
+                $fbId = $facebookArr['id'];
+
+                $user = User::query()->where('facebook_id',$fbId)->first();
+                if(!$user){
+                    $user = new User();
+                    $user->email = $facebookArr['email'];
+                    $user->facebook_id = $facebookArr['facebook_id'];
+                    $user->locale = $facebookArr['locale'];
+                    $user->time_zone = $facebookArr['time_zone'];
+//                    $user->birthday = $facebookArr['time_zone'];
+//                    $user->sex = $facebookArr['sex'];
+                   
+                }
+
+                $user->last_login = Carbon::now()->toDateTimeString();
+                $user->save();
+                
+                $token = $this->auth->login($user);
+
+                return $this->respond(compact('token'));
+            }else{
+                return $this->error(['code'=>$facebookArr['code'], 'message'=>$facebookArr['message']]);
+            }
         } catch (Exception $e) {
             Log::critical($e->getMessage());
             return $this->error([$e->getMessage()]);
