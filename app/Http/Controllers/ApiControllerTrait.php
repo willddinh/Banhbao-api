@@ -4,6 +4,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 trait ApiControllerTrait
 {
     protected $statusCode = IlluminateResponse::HTTP_OK;
+    protected $errorStatusCode = IlluminateResponse::HTTP_FORBIDDEN;
     protected $errorString = "ERROR";
     public function getStatusCode()
     {
@@ -26,4 +27,9 @@ trait ApiControllerTrait
         $responseContent=["status"=>$this->errorString, "data"=>$data];
         return response()->json($responseContent, $this->getStatusCode(), $headers);
     }
+    public function errorWithStatus($data, $headers = [], $statusCode){
+        $responseContent=["status"=>$this->errorString, "data"=>$data];
+        return response()->json($responseContent, $statusCode, $headers);
+    }
+
 }

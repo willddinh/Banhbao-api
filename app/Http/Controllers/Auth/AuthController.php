@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiControllerTrait;
+use App\Models\UserBalance;
 use App\User as User;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
@@ -45,13 +46,13 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->error($validator->errors());
+            return $this->errorWithStatus($validator->errors(), [],403);
         }
 
         $credentials = $request->only('email', 'password');
 
         if (! $token = $this->auth->attempt($credentials)) {
-            $this->respond(trans('auth.incorrect'));
+            return $this->errorWithStatus(["token"=>false], [], 403);
         }
 
         return $this->respond(compact('token'));
@@ -80,6 +81,14 @@ class AuthController extends Controller
             $user->email = $request->input('email');
             $user->password = \Hash::make($request->input('password'));
             $user->save();
+
+            $userBalance = new UserBalance();
+            $userBalance->user_id = $user->id;
+            $userBalance->main_balance = 0;
+            $userBalance->secondary_balance = 0;
+            $userBalance->status = UserBalance::STATUS_ACTIVE;
+            $userBalance ->save();
+
             return $this->respond($user);
         } catch (Exception $e) {
             Log::critical($e->getMessage());
@@ -115,12 +124,22 @@ class AuthController extends Controller
                     $user->time_zone = $facebookArr['time_zone'];
 //                    $user->birthday = $facebookArr['time_zone'];
 //                    $user->sex = $facebookArr['sex'];
+
+                    $user->last_login = Carbon::now()->toDateTimeString();
+                    $user->save();
+
+                    $userBalance = new UserBalance();
+                    $userBalance->user_id = $user->id;
+                    $userBalance->main_balance = 0;
+                    $userBalance->secondary_balance = 0;
+                    $userBalance->status = UserBalance::STATUS_ACTIVE;
+                    $userBalance ->save();
                    
+                }else{
+                    $user->last_login = Carbon::now()->toDateTimeString();
+                    $user->save();
                 }
 
-                $user->last_login = Carbon::now()->toDateTimeString();
-                $user->save();
-                
                 $token = $this->auth->login($user);
 
                 return $this->respond(compact('token'));

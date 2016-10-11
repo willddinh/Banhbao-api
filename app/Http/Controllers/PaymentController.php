@@ -29,6 +29,8 @@ class PaymentController extends BaseController
 
         $packageCode = $request->get('packageCode');
         $amount = $request->get('amount');
+        // create user_transaction and some
+
         
         
         return $this->respond(compact('user', 'currentLocale'));
