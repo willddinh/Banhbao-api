@@ -74,7 +74,16 @@ $api->version('v1', function ($api) {
             'as' => 'payment.pay',
             'uses' => 'App\Http\Controllers\PaymentController@pay',
         ]);
-        
+
+        $api->post('payment/confirmPay', [
+            'as' => 'payment.confirmPay',
+            'uses' => 'App\Http\Controllers\PaymentController@confirmPay',
+        ]);
+
+        $api->post('balance/info', [
+            'as' => 'balance.info',
+            'uses' => 'App\Http\Controllers\BalanceController@info',
+        ]);
         
     });
 });

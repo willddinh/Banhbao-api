@@ -12,7 +12,10 @@ class MerchantTransaction extends Model
     'request_time', 'response_code', 'response_message', 'response_time'];
 
     const STATUS_INIT = 'INIT';
-    const STATUS_FINISHED = 'FINISHED';
+    const STATUS_SUCCESS = 'SUCCESS';
+    const STATUS_PENDING= 'PENDING';
+    const STATUS_FAIL= 'FAIL';
+    const STATUS_FAIL_CONFIRM= 'FAIL_CONFIRM';
     public $timestamps = false;
 
 
