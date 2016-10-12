@@ -3,6 +3,8 @@
 namespace App\Services\Payment;
 
 
+use App\Exceptions\ConnectPayGateException;
+
 class OnePayGate
 {
     const ACCESS_KEY = "sbxsobmas5j0kyv9uto5";
@@ -22,6 +24,12 @@ class OnePayGate
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec($ch);
+        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_errno= curl_errno($ch);
+        if(curl_error($ch))
+        {
+            throw new ConnectPayGateException(curl_error($ch));
+        }
         curl_close($ch);
         return $result;
     }
@@ -35,7 +43,7 @@ class OnePayGate
         $data = "access_key=".self::ACCESS_KEY."&amount=".$amount."&command=".self::INIT_COMMAND."&order_id=".$order_id."&order_info=".$order_info."&return_url=".$return_url;
         $signature = hash_hmac("sha256", $data, self::SECRET_KEY);
         $data.= "&signature=".$signature;
-        $json_bankCharging = execPostRequest('http://api.1pay.vn/bank-charging/service', $data);
+        $json_bankCharging = OnePayGate::execPostRequest('http://api.1pay.vn/bank-charging/service', $data);
 //        print  $json_bankCharging;
 //Ex: {"pay_url":"http://api.1pay.vn/bank-charging/sml/nd/order?token=LuNIFOeClp9d8SI7XWNG7O%2BvM8GsLAO%2BAHWJVsaF0%3D", "status":"init", "trans_ref":"16aa72d82f1940144b533e788a6bcb6"}
         return json_decode($json_bankCharging,true);  // decode json
