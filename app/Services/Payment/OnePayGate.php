@@ -63,7 +63,7 @@ class OnePayGate
             $signature = hash_hmac("sha256", $data, self::SECRET_KEY);
             $data .= "&signature=" . $signature;
 
-            $json_bankCharging = execPostRequest('http://api.1pay.vn/bank-charging/service', $data);
+            $json_bankCharging = OnePayGate::execPostRequest('http://api.1pay.vn/bank-charging/service', $data);
 
             $decode_bankCharging = json_decode($json_bankCharging, true);  // decode json
             // Ex: {"amount":10000,"trans_status":"close","response_time": "2014-12-31T00:52:12Z","response_message":"Giao dịch thành công","response_code":"00","order_info":"test dich vu","order_id":"001","trans_ref":"44df289349c74a7d9690ad27ed217094", "request_time":"2014-12-31T00:50:11Z","order_type":"ND"}
