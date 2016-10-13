@@ -75,7 +75,7 @@ $api->version('v1', function ($api) {
             'uses' => 'App\Http\Controllers\PaymentController@pay',
         ]);
 
-        $api->post('payment/confirmPay', [
+        $api->post('payment/fakeConfirmPay', [
             'as' => 'payment.confirmPay',
             'uses' => 'App\Http\Controllers\PaymentController@confirmPay',
         ]);

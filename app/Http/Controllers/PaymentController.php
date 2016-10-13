@@ -72,6 +72,32 @@ class PaymentController extends BaseController
         return $this->respond(compact('pay_url'));
     }
 
+    public function fakeConfirmPay(Request $request){
+        $user = $this->auth->user();
+        $confirmPayment = json_decode('{"amount":10000,"trans_status":"close","response_time": "2014-12-31T00:52:12Z","response_message":"Giao dịch thành công","response_code":"00","order_info":"test dich vu","order_id":"001","trans_ref":"44df289349c74a7d9690ad27ed217094", "request_time":"2014-12-31T00:50:11Z","order_type":"ND"}', true);
+        // Ex: 
+        $response_code = $confirmPayment['response_code'];
+
+        //update user_balance
+        $userBalance = UserBalance::query()->where('user_id', $user->id)->first();
+        if(!$userBalance )
+            throw new SystemException("Can not found user balance");
+        $userBalance->main_balance = $userBalance->main_balance + $confirmPayment['amount'];
+        $userBalance->save();
+        unset($confirmPayment['trans_ref']);
+        unset($confirmPayment['request_time']);
+        unset($confirmPayment['order_type']);
+
+
+        $balance = UserBalance::query()->where('user_id', $user->id)->select('main_balance', 'secondary_balance', 'status')->first();
+        if(!$balance)
+            throw new SystemException("User has no balance");
+        $result = $balance->getAttributes();
+
+        return $this->respond(['message'=>'success',
+            'paymen_info'=>$confirmPayment,
+            'balance_info'=>$result]);
+    }
 
     public function confirmPay(Request $request){
         $user = $this->auth->user();
