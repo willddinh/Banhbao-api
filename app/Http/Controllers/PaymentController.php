@@ -129,12 +129,12 @@ class PaymentController extends BaseController
         $merchantTransaction->response_time = $response_time;
         $merchantTransaction->trans_status = $trans_status;
         $merchantTransaction->save();
-
-//        $confirmPayment = OnePayGate::confirmPayment($trans_ref,$response_code);
+        
+        $confirmPayment = OnePayGate::confirmPayment($trans_ref,$response_code);
 
         // Ex: {"amount":10000,"trans_status":"close","response_time": "2014-12-31T00:52:12Z","response_message":"Giao dịch thành công","response_code":"00","order_info":"test dich vu","order_id":"001","trans_ref":"44df289349c74a7d9690ad27ed217094", "request_time":"2014-12-31T00:50:11Z","order_type":"ND"}
-//        $response_code = $confirmPayment['response_code'];
-        /*if('00' != $response_code){
+        $response_code = $confirmPayment['response_code'];
+        if('00' != $response_code){
             $merchantTransaction->status = MerchantTransaction::STATUS_FAIL_CONFIRM;
             $merchantTransaction->response_code = $response_code;
             $merchantTransaction->response_message = $response_message;
@@ -143,7 +143,7 @@ class PaymentController extends BaseController
             $userTransaction->status = UserTransaction::STATUS_FAIL_CONFIRM;
             $userTransaction->save();
             throw new BusinessException("Error:".$response_message);
-        }*/
+        }
 
         $merchantTransaction->status = MerchantTransaction::STATUS_SUCCESS;
         $merchantTransaction->save();
