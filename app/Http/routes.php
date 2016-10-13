@@ -27,6 +27,8 @@ if(!$locale)
 $tran = app('translator');
 $tran->setlocale($locale);
 
+$appSession = Request::header("app_session");
+
 
 /*
 if (in_array($locale, $supportedLocales)) {
@@ -41,6 +43,9 @@ if (in_array($locale, $supportedLocales)) {
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+
+    $api->post('app/session', 'App\Http\Controllers\AppController@session');
+    
     $api->post('search/book/autocomplete/{text}', 'App\Http\Controllers\SearchController@booksAutoComplete');
     $api->get('users', 'App\Http\Controllers\UserController@getUser');
     $api->post('signup', 'App\Http\Controllers\Auth\AuthController@signup');
@@ -59,6 +64,9 @@ $api->version('v1', function ($api) {
     $api->get('book/list','App\Http\Controllers\BookController@listBooks');
     $api->get('book/detail/{id}','App\Http\Controllers\BookController@detail');
     $api->get('payment/pay-list','App\Http\Controllers\PaymentController@payList');
+
+
+    $api->post('cart/addOrderItem','App\Http\Controllers\CartController@addOrderItem');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {

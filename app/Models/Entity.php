@@ -13,6 +13,8 @@ class Entity extends BaseModel
 
     protected $dates = ['deleted_at'];
 
+    const TYPE_BOOK = 'BOOK';
+    const TYPE_FASHION = 'FASHION';
     
 
 
@@ -26,7 +28,15 @@ class Entity extends BaseModel
         return $this->belongsToMany('App\Models\SubCategory', 'entity_categories');
     }
 
-    
+    public function book()
+    {
+        return $this->hasOne('App\Models\Book', 'entity_id', 'id');
+    }
+
+    public function getRentPrice(){
+        if($this->type == Entity::TYPE_BOOK)
+            return $this->book->rent_price;
+    }
 
 
 }
