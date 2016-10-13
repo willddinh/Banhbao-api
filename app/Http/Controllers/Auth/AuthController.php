@@ -113,8 +113,8 @@ class AuthController extends Controller
             curl_close($curl);
             //@todo: check in db if user not exist -> create new else retrieve user infor by facebook id
             if(IlluminateResponse::HTTP_OK == $httpcode){
+                $this->validateFacebook($facebookArr['email']);
                 $fbId = $facebookArr['id'];
-
                 $user = User::query()->where('facebook_id',$fbId)->first();
                 if(!$user){
                     $user = new User();
@@ -175,6 +175,10 @@ class AuthController extends Controller
         return $this->respond(compact('token'));
     }
 
-   
+    private function validateFacebook($email)
+    {
+        
+    }
+
 
 }

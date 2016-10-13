@@ -63,7 +63,8 @@ class PaymentController extends BaseController
         $merchantTransaction->init_amount = $amount;
         $merchantTransaction->order_id = $userTransaction->id;
         $merchantTransaction->order_info = $package['product_name'];
-        $merchantTransaction->status = $requestPayment['status'];
+        $merchantTransaction->trans_status = $requestPayment['status'];
+        $merchantTransaction->status = MerchantTransaction::STATUS_PENDING;
         $merchantTransaction->trans_ref = $requestPayment['trans_ref'];
         $merchantTransaction->save();
         $pay_url = $requestPayment['pay_url'];
@@ -80,9 +81,16 @@ class PaymentController extends BaseController
         $response_message = $request->get('response_message');
         $trans_ref = $request->get('trans_ref');
         $merchantTransaction = MerchantTransaction::query()->where('trans_ref', $trans_ref)->first();
+
+        if($merchantTransaction->status != MerchantTransaction::STATUS_PENDING)
+            throw new SystemException("Transaction status not valid");
+
         if(!$merchantTransaction)
             throw new SystemException("Can not found merchant transaction");
         $userTransaction = UserTransaction::query()->find($merchantTransaction->order_id);
+
+        if($userTransaction->status != UserTransaction::STATUS_PENDING)
+            throw new SystemException("Transaction status not valid");
         if(!$userTransaction)
             throw new SystemException("Can not found user transaction");
 
@@ -110,7 +118,7 @@ class PaymentController extends BaseController
         $trans_status = $request->get('trans_status');
 
         
-        $merchantTransaction->status = MerchantTransaction::STATUS_PENDING;
+//        $merchantTransaction->status = MerchantTransaction::STATUS_PENDING;
         $merchantTransaction->transaction_amount = $amount;
         $merchantTransaction->card_name = $card_name;
         $merchantTransaction->card_type = $card_type;
@@ -151,7 +159,7 @@ class PaymentController extends BaseController
         $userBalance->main_balance = $userBalance->main_balance + $userTransaction->total;
         $userBalance->save();
         
-        return $this->respond(['message'=>'success']);
+        return $this->respond(['message'=>'success', 'transaction_id'=>$userTransaction->id]);
     }
 
     public function payList(){
