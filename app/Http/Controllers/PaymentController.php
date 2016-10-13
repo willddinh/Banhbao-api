@@ -158,8 +158,19 @@ class PaymentController extends BaseController
             throw new SystemException("Can not found user balance");
         $userBalance->main_balance = $userBalance->main_balance + $userTransaction->total;
         $userBalance->save();
-        
-        return $this->respond(['message'=>'success', 'transaction_id'=>$userTransaction->id]);
+        unset($confirmPayment['trans_ref']);
+        unset($confirmPayment['request_time']);
+        unset($confirmPayment['order_type']);
+
+
+        $balance = UserBalance::query()->where('user_id', $user->id)->select('main_balance', 'secondary_balance', 'status')->first();
+        if(!$balance)
+            throw new SystemException("User has no balance");
+        $result = $balance->getAttributes();
+
+        return $this->respond(['message'=>'success',
+            'paymen_info'=>$confirmPayment,
+            'balance_info'=>$result]);
     }
 
     public function payList(){
