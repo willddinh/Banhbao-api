@@ -31,6 +31,29 @@ class CartController extends BaseController
         $this->auth = $auth;
     }
 
+    public function orderInfo($id, Request $request){
+        $user = $this->auth->user();
+        $appSession = $request->header("app-session");
+        if($user){
+            $order = Order::query()->with('items')->where('user_id', $user->id)
+                ->where('id', $id)
+                ->first();
+            if(!$order)
+                throw new BusinessException("Not found");
+            
+           
+        }else{
+            $order = Order::query()->with('items')->where('app_session', $appSession)
+                ->where('id', $id)
+                ->first();
+            if(!$order)
+                throw new BusinessException("Not found");
+
+        }
+
+        return  $this->respond(compact('order'));
+
+    }
 
     public function addOrderItem(Request $request){
 

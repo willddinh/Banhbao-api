@@ -67,6 +67,7 @@ $api->version('v1', function ($api) {
 
 
     $api->post('cart/addOrderItem','App\Http\Controllers\CartController@addOrderItem');
+    $api->get('cart/orderInfo/{id}','App\Http\Controllers\CartController@orderInfo');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {
