@@ -76,7 +76,7 @@ class PaymentController extends BaseController
         $user = $this->auth->user();
         $confirmPayment = json_decode('{"amount":10000,"trans_status":"close","response_time": "2014-12-31T00:52:12Z","response_message":"Giao dịch thành công","response_code":"00","order_info":"test dich vu","order_id":"001","trans_ref":"44df289349c74a7d9690ad27ed217094", "request_time":"2014-12-31T00:50:11Z","order_type":"ND"}', true);
         // Ex: 
-        $response_code = $confirmPayment['response_code'];
+
 
         //update user_balance
         $userBalance = UserBalance::query()->where('user_id', $user->id)->first();
