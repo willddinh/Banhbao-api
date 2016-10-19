@@ -6,6 +6,8 @@ use App;
 use App\Exceptions\BusinessException;
 use App\Exceptions\SystemException;
 use App\Models\Book;
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Entity;
 use App\Models\MerchantTransaction;
 use App\Models\Order;
@@ -31,31 +33,29 @@ class CartController extends BaseController
         $this->auth = $auth;
     }
 
-    public function orderInfo($id, Request $request){
+    public function cartInfo(Request $request){
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
         if($user){
-            $order = Order::query()->with('items')->where('user_id', $user->id)
-                ->where('id', $id)
+            $cart = Cart::query()->with('items.entity')->where('user_id', $user->id)
+                ->where('status', Cart::STATUS_INIT)
                 ->first();
-            if(!$order)
+            if(!$cart)
                 throw new BusinessException("Not found");
             
            
         }else{
-            $order = Order::query()->with('items')->where('app_session', $appSession)
-                ->where('id', $id)
+            $cart = Cart::query()->with('items.entity')->where('app_session', $appSession)
+                ->where('status', Cart::STATUS_INIT)
                 ->first();
-            if(!$order)
+            if(!$cart)
                 throw new BusinessException("Not found");
 
         }
-
-        return  $this->respond(compact('order'));
-
+        return  $this->respond(compact('cart'));
     }
 
-    public function addOrderItem(Request $request){
+    public function addCartItem(Request $request){
 
         $productId = $request->get('productId');
         $entity = Entity::query()->find($productId);
@@ -68,57 +68,59 @@ class CartController extends BaseController
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
         if($user){
-            $order = Order::query()->with('items')->where('user_id', $user->id)
+            $cart = Cart::query()->with('items')->where('user_id', $user->id)
                 ->where('status', Order::STATUS_INIT)
                 ->first();
-            if($order){
-                $items = $order->items;
+            if($cart){
+                $items = $cart->items;
                 foreach ($items as $item ){
                     if($item->product_id == $productId)
-                        return  $this->respond(['orderId'=>$order->id]);
+                        return  $this->respond(['cartId'=>$cart->id]);
                 }
 
             }else{
-                $order = new Order();
-                $order->user_id = $user->id;
-                $order->status = Order::STATUS_INIT;
-                $order->save();
+                $cart = new Cart();
+                $cart->user_id = $user->id;
+                $cart->app_session = $appSession;
+                $cart->status = Order::STATUS_INIT;
+                $cart->save();
             }
 
            
         }else{
-            $order = Order::query()->with('items')->where('app_session',$appSession)
+            $cart = Cart::query()->with('items')->where('app_session',$appSession)
                 ->where('status', Order::STATUS_INIT)
                 ->first();
 
-            if($order){
-                $items = $order->items;
+            if($cart){
+                $items = $cart->items;
                 foreach ($items as $item ){
                     if($item->product_id == $productId)
-                       return $this->respond(['orderId'=>$order->id]);
+                       return $this->respond(['cartId'=>$cart->id]);
                 }
 
             }else{
-                $order = new Order();
-                $order->app_session = $appSession;
-                $order->status = Order::STATUS_INIT;
-                $order->save();
+                $cart = new Cart();
+                $cart->app_session = $appSession;
+//                $cart->user_id = $user->id;
+                $cart->status = Order::STATUS_INIT;
+                $cart->save();
             }
 
         }
-        $this->addItemToOrder($order, $productId, $entity);
-        return $this->respond(['orderId'=>$order->id]);
+        $this->addItemToCart($cart, $productId, $entity);
+        return $this->respond(['cartId'=>$cart->id]);
     }
 
-    private function addItemToOrder($order, $productId, $entity){
-        $orderItem = new OrderItem();
-        $orderItem->order_id = $order->id;
-        $orderItem->product_id = $productId;
-        $orderItem->product_name = $entity->title;
-        $orderItem->price = $entity->getRentPrice();
-        $orderItem->quantity = 1;
-        $orderItem->save();
-        return $orderItem;
+    private function addItemToCart($cart, $productId, $entity){
+        $cartItem = new CartItem();
+        $cartItem->cart_id = $cart->id;
+        $cartItem->product_id = $productId;
+        $cartItem->product_name = $entity->title;
+//        $cartItem->price = $entity->getRentPrice();
+        $cartItem->quantity = 1;
+        $cartItem->save();
+        return $cartItem;
     }
 
     private function resolveProduct($entity){

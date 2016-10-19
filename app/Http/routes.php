@@ -66,8 +66,8 @@ $api->version('v1', function ($api) {
     $api->get('payment/pay-list','App\Http\Controllers\PaymentController@payList');
 
 
-    $api->post('cart/addOrderItem','App\Http\Controllers\CartController@addOrderItem');
-    $api->get('cart/orderInfo/{id}','App\Http\Controllers\CartController@orderInfo');
+    $api->post('cart/addCartItem','App\Http\Controllers\CartController@addCartItem');
+    $api->get('cart/cartInfo','App\Http\Controllers\CartController@cartInfo');
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {
