@@ -55,6 +55,160 @@ class CartController extends BaseController
         return  $this->respond(compact('cart'));
     }
 
+
+    public function deleteCart(Request $request){
+        $cartId = $request->get('cartId');
+
+        $user = $this->auth->user();
+        $appSession = $request->header("app-session");
+
+        if($user){
+            $cart = Cart::query()->find($cartId);
+            if($cart->user_id != $user->id)
+                throw new BusinessException("invalid action");
+            if($cart){
+                $cart->delete();
+            }else
+                throw new BusinessException("user has no cart");
+
+
+        }else{
+            $cart = Cart::query()->find($cartId);
+            if($cart->app_session != $appSession)
+                throw new BusinessException("invalid action");
+
+            if($cart){
+                $cart->delete();
+            }else
+                throw new BusinessException("user has no cart");
+
+        }
+
+        return $this->respond(['message'=>'ok']);
+
+    }
+
+
+    public function deleteCartItem(Request $request){
+        $cartId = $request->get('cartId');
+        $productId = $request->get('productId');
+        $entity = Entity::query()->find($productId);
+
+        if(!$entity)
+            throw new BusinessException("productId not valid");
+        $user = $this->auth->user();
+        $appSession = $request->header("app-session");
+
+        if($user){
+            $cart = Cart::query()->with('items')->find($cartId);
+            if($cart->user_id != $user->id)
+                throw new BusinessException("invalid action");
+            if($cart){
+                $items = $cart->items;
+                foreach ($items as $item ){
+                    if($item->product_id == $productId){
+                        $cartItem =  CartItem::query()->find($productId);
+                        $cartItem->delete();
+                        return  $this->respond(['cartId'=>$cart->id]);
+                    }
+
+                }
+
+            }else
+                throw new BusinessException("user has no cart");
+
+
+        }else{
+            $cart = Cart::query()->with('items')->find($cartId);
+            if($cart->app_session != $appSession)
+                throw new BusinessException("invalid action");
+
+            if($cart){
+                $items = $cart->items;
+                foreach ($items as $item ){
+                    if($item->product_id == $productId){
+                        $cartItem =  CartItem::query()->find($productId);
+                        $cartItem->delete();
+                        return  $this->respond(['cartId'=>$cart->id]);
+                    }
+
+                }
+
+            }else
+                throw new BusinessException("user has no cart");
+
+        }
+
+        return $this->respond(['cartId'=>$cart->id]);
+
+    }
+
+
+    public function updateCartItem(Request $request){
+        $cartId = $request->get('cartId');
+        $productId = $request->get('productId');
+        $quantity = $request->get('quantity');
+        $entity = Entity::query()->find($productId);
+
+        if(!$entity)
+            throw new BusinessException("productId not valid");
+        $user = $this->auth->user();
+        $appSession = $request->header("app-session");
+
+        if($user){
+            $cart = Cart::query()->with('items')->find($cartId);
+            if($cart->user_id != $user->id)
+                throw new BusinessException("invalid action");
+            if($cart){
+                $items = $cart->items;
+                foreach ($items as $item ){
+                    if($item->product_id == $productId){
+                        $cartItem =  CartItem::query()->find($productId);
+                        if($cartItem){
+                            $cartItem->quantity = $quantity;
+                            $cartItem->save();
+                            return  $this->respond(['cartId'=>$cart->id]);
+                        }else
+                            throw new BusinessException("product not in cart");
+                    }
+
+                }
+
+            }else
+                throw new BusinessException("user has no cart");
+
+
+        }else{
+            $cart = Cart::query()->with('items')->find($cartId);
+            if($cart->app_session != $appSession)
+                throw new BusinessException("invalid action");
+
+            if($cart){
+                $items = $cart->items;
+                foreach ($items as $item ){
+                    if($item->product_id == $productId){
+                        $cartItem =  CartItem::query()->find($productId);
+                        if($cartItem){
+                            $cartItem->quantity = $quantity;
+                            $cartItem->save();
+                            return  $this->respond(['cartId'=>$cart->id]);
+                        }else
+                            throw new BusinessException("product not in cart");
+
+                    }
+
+                }
+
+            }else
+                throw new BusinessException("user has no cart");
+
+        }
+
+        return $this->respond(['cartId'=>$cart->id]);
+
+    }
+
+
     public function addCartItem(Request $request){
 
         $productId = $request->get('productId');

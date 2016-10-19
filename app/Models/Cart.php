@@ -16,4 +16,11 @@ class Cart extends Model
         return $this->hasMany('App\Models\CartItem');
     }
 
+    public function delete()
+    {
+        $this->items()->delete();
+        return parent::delete();
+    }
+
+
 }
