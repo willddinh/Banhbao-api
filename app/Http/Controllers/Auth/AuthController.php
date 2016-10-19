@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiControllerTrait;
+use App\Models\Cart;
 use App\Models\UserBalance;
 use App\User as User;
 use Carbon\Carbon;
@@ -53,6 +54,20 @@ class AuthController extends Controller
 
         if (! $token = $this->auth->attempt($credentials)) {
             return $this->errorWithStatus(["token"=>false], [], 403);
+        }
+
+        //add user to CartInfo
+        //@todo apply envent listenner
+        $appSession = $request->header("app-session");
+        $cart = Cart::query()->with('items')->where('app_session',$appSession)
+            ->where('status', Order::STATUS_INIT)
+            ->first();
+        if($cart){
+            if(!$cart->user_id){
+                $user = $this->auth->user();
+                $cart->user_id =  $user->id;
+                $cart->save();
+            }
         }
 
         return $this->respond(compact('token'));

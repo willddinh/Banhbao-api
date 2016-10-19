@@ -10,8 +10,6 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Entity;
 use App\Models\MerchantTransaction;
-use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\UserBalance;
 use App\Models\UserTransaction;
 use App\Services\Payment\OnePayGate;
@@ -148,6 +146,8 @@ class CartController extends BaseController
         $cartId = $request->get('cartId');
         $productId = $request->get('productId');
         $quantity = $request->get('quantity');
+        if($quantity < 1)
+            throw new BusinessException("quantity must be positive");
         $entity = Entity::query()->find($productId);
 
         if(!$entity)
@@ -223,7 +223,7 @@ class CartController extends BaseController
         $appSession = $request->header("app-session");
         if($user){
             $cart = Cart::query()->with('items')->where('user_id', $user->id)
-                ->where('status', Order::STATUS_INIT)
+                ->where('status', Cart::STATUS_INIT)
                 ->first();
             if($cart){
                 $items = $cart->items;
@@ -236,14 +236,14 @@ class CartController extends BaseController
                 $cart = new Cart();
                 $cart->user_id = $user->id;
                 $cart->app_session = $appSession;
-                $cart->status = Order::STATUS_INIT;
+                $cart->status = Cart::STATUS_INIT;
                 $cart->save();
             }
 
            
         }else{
             $cart = Cart::query()->with('items')->where('app_session',$appSession)
-                ->where('status', Order::STATUS_INIT)
+                ->where('status', Cart::STATUS_INIT)
                 ->first();
 
             if($cart){
@@ -257,7 +257,7 @@ class CartController extends BaseController
                 $cart = new Cart();
                 $cart->app_session = $appSession;
 //                $cart->user_id = $user->id;
-                $cart->status = Order::STATUS_INIT;
+                $cart->status = Cart::STATUS_INIT;
                 $cart->save();
             }
 

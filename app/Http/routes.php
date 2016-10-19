@@ -100,6 +100,15 @@ $api->version('v1', function ($api) {
             'as' => 'balance.info',
             'uses' => 'App\Http\Controllers\BalanceController@info',
         ]);
-        
+
+        //order
+        $api->get('order/shipping','App\Http\Controllers\OrderController@shipping');
+        $api->get('order/createOrder','App\Http\Controllers\OrderController@createOrder');
+        $api->get('order/payment','App\Http\Controllers\OrderController@payment');
+
+        //user shipping address
+        $api->post('address/new','App\Http\Controllers\OrderController@addShippingAddress');
+        $api->post('address/update','App\Http\Controllers\OrderController@updateShippingAddress');
+        $api->post('address/all','App\Http\Controllers\OrderController@getShippingAddreses');
     });
 });

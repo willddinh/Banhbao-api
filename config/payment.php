@@ -45,5 +45,10 @@ return [
       '28'=>'Giao dịch không thành công do quá thời gian quy định.',
       '29'=>'Lỗi xử lý giao dịch tại hệ thống Ngân hàng.',
       '99'=>'Không xác định.',
-  ]
+  ],
+   'account'=>[
+       ['code'=>"331.1", "name"=>"Trả tiền thuê sách"],
+       ['code'=>"131.1", "name"=>"Đặt cọc thuê sách"],
+   ]
+
 ];
