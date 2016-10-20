@@ -17,6 +17,7 @@ use App\Models\UserBalance;
 use App\Models\UserTransaction;
 use App\Services\Payment\OnePayGate;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Translation\Translator;
@@ -31,7 +32,6 @@ class OrderController extends BaseController
 
     public function __construct(AuthManager $auth)
     {
-
         $this->auth = $auth;
     }
 
@@ -39,14 +39,14 @@ class OrderController extends BaseController
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
         $cart = Cart::query()->with('items.entity')->where('user_id', $user->id)
-            ->where('app-session', $appSession)
+            ->where('app_session', $appSession)
             ->where('status', Cart::STATUS_INIT)
             ->first();
         if(!$cart)
             throw new BusinessException("Not found");
         $shippingAddressId = $request->get('shippingAddressId');
         $cart->shipping_address_id = $shippingAddressId;
-
+        $cart->save();
 
         return  $this->respond(['message'=>'ok']);
     }
@@ -55,7 +55,7 @@ class OrderController extends BaseController
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
         $cart = Cart::query()->with('items.entity')->where('user_id', $user->id)
-            ->where('app-session', $appSession)
+            ->where('app_session', $appSession)
             ->where('status', Cart::STATUS_INIT)
             ->first();
         if(!$cart)
@@ -121,7 +121,7 @@ class OrderController extends BaseController
         if(!$userBalance)
             throw new BusinessException("user balance not exist");
         $total = $order->getTotal();
-        if($total < $userBalance->main_balance)
+        if($total > $userBalance->main_balance)
             throw new BusinessException("your balance is not enought to pay");
         $deposit = $order->getDeposit();
 
@@ -185,10 +185,20 @@ class OrderController extends BaseController
         $userAddress->address =$address;
         $userAddress->type =$type;
         $userAddress->phone =$phone;
-        $userAddress->is_main =$isMain;
+//        $userAddress->is_main = $isMain;
         $userAddress->save();
 
+        if($isMain == 1 ){
+            $this->resetDefaultShippingAddress($user->id);
+            $userAddress->is_main = $isMain;
+            $userAddress->save();
+        }
+
         return  $this->respond(compact('userAddress'));
+    }
+
+    private function resetDefaultShippingAddress($userId){
+        DB::table('user_addresses')->where('user_id', $userId)->where('is_main', 1)->update(array('is_main' => 0));
     }
 
     public function updateShippingAddress(Request $request){
@@ -196,6 +206,9 @@ class OrderController extends BaseController
         
         $addressId = $request->get("addressId");
         $userAddress = UserAddress::query()->find($addressId);
+        if(!$userAddress)
+            throw new BusinessException("Address not found");
+
         if($userAddress->user_id != $user->id)
             throw new BusinessException("Invalid address");
         
@@ -207,14 +220,20 @@ class OrderController extends BaseController
         $phone = $request->get("phone");
         $isMain =  $request->get("is_main");
 
-        $userAddress->full_name =$fullName;
-        $userAddress->province =$province;
-        $userAddress->district =$district;
-        $userAddress->address =$address;
-        $userAddress->type =$type;
-        $userAddress->phone =$phone;
-        $userAddress->is_main =$isMain;
+        $userAddress->full_name = $fullName;
+        $userAddress->province = $province;
+        $userAddress->district = $district;
+        $userAddress->address = $address;
+        $userAddress->type = $type;
+        $userAddress->phone = $phone;
+//        $userAddress->is_main = $isMain;
         $userAddress->save();
+
+        if($isMain == 1 ){
+            $this->resetDefaultShippingAddress($user->id);
+            $userAddress->is_main = $isMain;
+            $userAddress->save();
+        }
 
         return  $this->respond(compact('userAddress'));
     }
@@ -222,7 +241,7 @@ class OrderController extends BaseController
 
     public function getShippingAddreses(){
         $user = $this->auth->user();
-        $shippingAddresses = UserAddress::query()->where('user_id', $user->id);
+        $shippingAddresses = UserAddress::query()->where('user_id', $user->id)->get();
 
         return  $this->respond(compact('shippingAddresses'));
     }

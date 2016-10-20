@@ -45,7 +45,8 @@ class Order extends Model
         }
 
         $result = $result - $this->shipping_fee;
-        return $result;
+        
+        return $result > 0 ? $result : 0;
     }
 
     public function getRentFee(){

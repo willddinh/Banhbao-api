@@ -102,9 +102,9 @@ $api->version('v1', function ($api) {
         ]);
 
         //order
-        $api->get('order/shipping','App\Http\Controllers\OrderController@shipping');
-        $api->get('order/createOrder','App\Http\Controllers\OrderController@createOrder');
-        $api->get('order/payment','App\Http\Controllers\OrderController@payment');
+        $api->post('order/shipping','App\Http\Controllers\OrderController@shipping');
+        $api->post('order/createOrder','App\Http\Controllers\OrderController@createOrder');
+        $api->post('order/payment','App\Http\Controllers\OrderController@payment');
 
         //user shipping address
         $api->post('address/new','App\Http\Controllers\OrderController@addShippingAddress');
