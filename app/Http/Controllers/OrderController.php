@@ -96,7 +96,7 @@ class OrderController extends BaseController
             $orderItem->order_id = $order->id;
             $orderItem->product_id = $cartItem->product_id;
             $orderItem->product_name = $cartItem->product_name;
-            $orderItem->rent_price = $cartItem->entity->getRentPrice();
+            $orderItem->rent_price = $cartItem->entity->rent_price;
             $orderItem->price  = $cartItem->entity->price;
             $orderItem->quantity = $cartItem->quantity;
             $orderItem->save();

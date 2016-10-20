@@ -28,7 +28,7 @@ $app = new Laravel\Lumen\Application(
 class_alias('Illuminate\Support\Facades\Hash', 'Hash');
 class_alias('Illuminate\Support\Facades\Config', 'Config');
 class_alias('Illuminate\Support\Facades\Request', 'Request');
-class_alias('Illuminate\Support\Facades\Event', 'Event');
+//class_alias('Illuminate\Support\Facades\Event', 'Event');
 
 
 //class_alias('Tymon\JWTAuth\Facades\JWTAuth', 'JWTAuth');

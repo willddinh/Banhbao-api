@@ -60,7 +60,7 @@ class AuthController extends Controller
         //@todo apply envent listenner
         $appSession = $request->header("app-session");
         $cart = Cart::query()->with('items')->where('app_session',$appSession)
-            ->where('status', Order::STATUS_INIT)
+            ->where('status', Cart::STATUS_INIT)
             ->first();
         if($cart){
             if(!$cart->user_id){

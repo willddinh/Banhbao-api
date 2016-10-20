@@ -125,7 +125,7 @@ class CartController extends BaseController
                 $items = $cart->items;
                 foreach ($items as $item ){
                     if($item->product_id == $productId){
-                        $cartItem =  CartItem::query()->find($productId);
+                        $cartItem =  CartItem::query()->find($item->id);
                         $cartItem->delete();
                         return  $this->respond(['cartId'=>$cart->id]);
                     }
