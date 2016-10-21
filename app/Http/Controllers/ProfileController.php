@@ -6,6 +6,7 @@ use App;
 use App\Exceptions\BusinessException;
 use App\Exceptions\SystemException;
 use App\Models\MerchantTransaction;
+use App\Models\UserAddress;
 use App\Models\UserBalance;
 use App\Models\UserTransaction;
 use App\Services\Payment\OnePayGate;
@@ -15,7 +16,7 @@ use Illuminate\Translation\Translator;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 
-class BalanceController extends BaseController
+class ProfileController extends BaseController
 {
     use ApiControllerTrait;
 
@@ -27,16 +28,15 @@ class BalanceController extends BaseController
     }
 
 
-    public function info(){
+    public function me(){
         $user = $this->auth->user();
-        $tran = app('translator');
-//        $currentLocale= $tran->getlocale();
-        $balance = UserBalance::query()->where('user_id', $user->id)->select('main_balance', 'secondary_balance', 'deposit', 'status')->first();
-        if(!$balance)
+        $myBalance = UserBalance::query()->where('user_id', $user->id)->select('main_balance', 'secondary_balance', 'deposit', 'status')->first();
+        if(!$myBalance)
             throw new SystemException("User has no balance");
-        $result = $balance->getAttributes();
+        $balance = $myBalance->getAttributes();
+        $addresses = UserAddress::query()->where('user_id', $user->id);
 
-        return $this->respond(compact('result'));
+        return $this->respond(compact('balance', 'user', 'addresses'));
     }
 
 

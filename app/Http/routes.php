@@ -96,10 +96,7 @@ $api->version('v1', function ($api) {
             'uses' => 'App\Http\Controllers\PaymentController@confirmPay',
         ]);
 
-        $api->post('balance/info', [
-            'as' => 'balance.info',
-            'uses' => 'App\Http\Controllers\BalanceController@info',
-        ]);
+
 
         //order
         $api->post('order/shipping','App\Http\Controllers\OrderController@shipping');
@@ -110,5 +107,18 @@ $api->version('v1', function ($api) {
         $api->post('address/new','App\Http\Controllers\OrderController@addShippingAddress');
         $api->post('address/update','App\Http\Controllers\OrderController@updateShippingAddress');
         $api->post('address/all','App\Http\Controllers\OrderController@getShippingAddreses');
+
+        //user profile
+        $api->post('balance/info', [
+            'as' => 'balance.info',
+            'uses' => 'App\Http\Controllers\BalanceController@info',
+        ]);
+
+        $api->post('profile/me', [
+            'as' => 'balance.info',
+            'uses' => 'App\Http\Controllers\ProfileController@me',
+        ]);
+
+
     });
 });

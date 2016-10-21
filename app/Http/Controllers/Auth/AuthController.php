@@ -101,6 +101,8 @@ class AuthController extends Controller
             $userBalance->user_id = $user->id;
             $userBalance->main_balance = 0;
             $userBalance->secondary_balance = 0;
+            $userBalance->deposit = 0;
+            $userBalance->service_balance = 0;
             $userBalance->status = UserBalance::STATUS_ACTIVE;
             $userBalance ->save();
 
