@@ -16,7 +16,7 @@ class Book extends BaseModel implements ModelInterface, SluggableInterface
     use EntitySupportTrait;
 
     public $table = 'books';
-    protected $fillable = ['discount', 'external_url', 'content', 'meta_keywords', 'meta_description', 'is_published', 'isbn', 'size', 'rent_price', 'page_num'];
+    protected $fillable = ['discount', 'external_url', 'content', 'meta_keywords', 'meta_description', 'is_published', 'isbn', 'size',  'page_num'];
     protected $appends = ['url'];
 
     protected $sluggable = array(

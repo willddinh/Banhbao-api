@@ -89,7 +89,7 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->all(), User::$rules);
             if ($validator->fails()) {
-                return $this->error($validator->errors());
+                return $this->errorWithStatus($validator->errors(), [], 500);
             }
             $user = new User();
             $user->name = $request->input('name');
@@ -107,7 +107,7 @@ class AuthController extends Controller
             return $this->respond($user);
         } catch (Exception $e) {
             Log::critical($e->getMessage());
-            return $this->error([$e->getMessage()]);
+            return $this->errorWithStatus([$e->getMessage()], [], 500);
         }
     }
 
