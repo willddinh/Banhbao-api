@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\ExampleEvent;
 use App\Http\Controllers\ApiControllerTrait;
 use App\Models\Cart;
 use App\Models\UserBalance;
@@ -16,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller;
 use League\Flysystem\Exception;
@@ -70,6 +72,7 @@ class AuthController extends Controller
             }
         }
 
+        Event::fire(new ExampleEvent());
         return $this->respond(compact('token'));
     }
 
@@ -105,7 +108,7 @@ class AuthController extends Controller
             $userBalance->service_balance = 0;
             $userBalance->status = UserBalance::STATUS_ACTIVE;
             $userBalance ->save();
-
+            
             return $this->respond($user);
         } catch (Exception $e) {
             Log::critical($e->getMessage());

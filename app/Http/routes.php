@@ -115,10 +115,16 @@ $api->version('v1', function ($api) {
         ]);
 
         $api->post('profile/me', [
-            'as' => 'balance.info',
+            'as' => 'profile.me',
             'uses' => 'App\Http\Controllers\ProfileController@me',
         ]);
 
+        $api->post('profile/my-orders', [
+            'as' => 'profile.myorders',
+            'uses' => 'App\Http\Controllers\ProfileController@myOrders',
+        ]);
+
+        
 
     });
 });
