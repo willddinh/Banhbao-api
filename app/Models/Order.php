@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CartCalculatorTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -11,6 +12,7 @@ class Order extends Model
     const STATUS_EXPIRED = 'EXPIRED';
     const STATUS_PAYED = 'PAYED';
     const STATUS_FINISHED = 'FINISHED';
+    use CartCalculatorTrait;
 
     public function items()
     {
@@ -23,42 +25,10 @@ class Order extends Model
         return parent::delete();
     }
 
-    //@todo: many policies apply here :/>
-    public function getTotal(){
-        $result = 0;
-        if($this->items){
-            foreach ($this->items as $item) {
-                $result = $result + $item->price;
-            }
-        }
-        return $result;
+    public function getShippingFee(){
+        return $this->shipping_fee;
     }
-
-    public function getDeposit(){
-        $result = 0;
-        if($this->items){
-            foreach ($this->items as $item) {
-                $aDeposit =$item->price - $item->rent_price;
-                $aDeposit = $aDeposit > 0 ? $aDeposit : 0;
-                $result = $result + $aDeposit;
-            }
-        }
-
-        $result = $result - $this->shipping_fee;
-        
-        return $result > 0 ? $result : 0;
-    }
-
-    public function getRentFee(){
-        $result = $this->shipping_fee;
-        if($this->items){
-            foreach ($this->items as $item) {
-                $aFee =$item->rent_price;
-                $result = $result + $aFee ;
-            }
-        }
-        return $result;
-    }
+   
 
 
 }

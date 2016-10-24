@@ -22,5 +22,5 @@ class Cart extends Model
         return parent::delete();
     }
 
-
+    
 }

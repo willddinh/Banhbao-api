@@ -124,6 +124,7 @@ $app->register(App\Providers\RepositoryServiceProvider::class);
 $app->register(Cviebrock\LaravelElasticsearch\LumenServiceProvider::class);
 
 $app->register(App\Providers\InviteServiceProvider::class);
+$app->register(App\Providers\PayCalculatorServiceProvider::class);
 
 
 

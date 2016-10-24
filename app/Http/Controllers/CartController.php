@@ -13,6 +13,7 @@ use App\Models\MerchantTransaction;
 use App\Models\UserBalance;
 use App\Models\UserTransaction;
 use App\Services\Payment\OnePayGate;
+use App\Services\Payment\PayCalculatorInterface;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Translation\Translator;
@@ -24,18 +25,20 @@ class CartController extends BaseController
     use ApiControllerTrait;
 
     protected $auth;
+    protected $payCalculator;
     
-    public function __construct(AuthManager $auth)
+    public function __construct(AuthManager $auth, PayCalculatorInterface $payCalculator)
     {
 
         $this->auth = $auth;
+        $this->payCalculator = $payCalculator;
     }
 
     public function cartInfo(Request $request){
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
         if($user){
-            $cart = Cart::query()->with('items.entity')->where('user_id', $user->id)
+            $cart = Cart::query()->with('items.entity.book')->where('user_id', $user->id)
                 ->where('status', Cart::STATUS_INIT)
                 ->first();
             if(!$cart)
@@ -43,14 +46,15 @@ class CartController extends BaseController
             
            
         }else{
-            $cart = Cart::query()->with('items.entity')->where('app_session', $appSession)
+            $cart = Cart::query()->with('items.entity.book')->where('app_session', $appSession)
                 ->where('status', Cart::STATUS_INIT)
                 ->first();
             if(!$cart)
                 throw new BusinessException("Not found");
 
         }
-        return  $this->respond(compact('cart'));
+        $calculateCart = $this->payCalculator->calculateCart($cart);
+        return  $this->respond(compact('cart', 'calculateCart'));
     }
 
 
