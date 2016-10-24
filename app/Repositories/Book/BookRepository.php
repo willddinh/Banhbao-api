@@ -501,7 +501,7 @@ class BookRepository extends RepositoryAbstract implements BookInterface, Crudab
             $queryBuilder->whereIn('entity_categories.sub_category_id', $subCategoriesIdArr);
 
 
-        $queryBuilder->select('books.id','entity.rent_price', 'books.path','entity.title', 'entity.price', 'authors.name as author');
+        $queryBuilder->select('books.id','entity.id as entityId','entity.rent_price', 'books.path','entity.title', 'entity.price', 'authors.name as author');
         $result->totalItems = $this->totalListBook($queryBuilder);
         $books = $queryBuilder->skip($limit * ($page - 1))->take($limit)->get();
 

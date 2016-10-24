@@ -124,7 +124,11 @@ $api->version('v1', function ($api) {
             'uses' => 'App\Http\Controllers\ProfileController@myOrders',
         ]);
 
-        
+        //invite
+        $api->post('invite/do', [
+            'as' => 'invite.do',
+            'uses' => 'App\Http\Controllers\InviteController@invite',
+        ]);
 
     });
 });

@@ -41,6 +41,8 @@ class_alias('Illuminate\Support\Facades\Request', 'Request');
 $app->configure('elasticsearch');
 $app->configure('payment');
 
+
+
 //$app->alias('cache', 'Illuminate\Cache\CacheManager');
 //$app->alias('auth', 'Illuminate\Auth\AuthManager');
 /*
@@ -120,6 +122,10 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
 $app->register(App\Providers\RepositoryServiceProvider::class);
 $app->register(Cviebrock\LaravelElasticsearch\LumenServiceProvider::class);
+
+$app->register(App\Providers\InviteServiceProvider::class);
+
+
 
 
 
