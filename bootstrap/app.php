@@ -94,6 +94,7 @@ $app->middleware([
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'appSession' =>App\Http\Middleware\CheckAppSessionMiddleware::class,
 ]);
 
 

@@ -225,6 +225,7 @@ class CartController extends BaseController
 
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
+         
         if($user){
             $cart = Cart::query()->with('items')->where('user_id', $user->id)
                 ->where('status', Cart::STATUS_INIT)
