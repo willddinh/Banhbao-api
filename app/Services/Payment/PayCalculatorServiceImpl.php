@@ -28,8 +28,9 @@ class PayCalculatorServiceImpl implements PayCalculatorInterface
         $deposit = $this->getDeposit($cart, $shippingFee);
         $rentFee = $this->getRentFee($cart, $shippingFee);
         $total = $this->getTotal($cart, $shippingFee);
+        $itemNumber = count($cart->items);
         
-        return new CartSummarize($rentFee,$shippingFee, $total,  $deposit);
+        return new CartSummarize($rentFee,$shippingFee, $total,  $deposit, $itemNumber);
     }
 
     public function getTotal($cart, $shippingFee){

@@ -34,6 +34,8 @@ class PaymentController extends BaseController
         $currentLocale= $tran->getlocale();
 
         $packageCode = $request->get('packageCode');
+        if(!$packageCode)
+            $packageCode = "152.0";
         $amount = $request->get('amount');
         $validateInput = $this->validateInput($packageCode, $amount);
         if($validateInput['status'] != 'success')
@@ -210,11 +212,13 @@ class PaymentController extends BaseController
 
     private function validateInput($packageCode, $amount)
     {
+        if($amount < 20000)
+            return ['status'=>'error', 'message'=>'amount must be more than 20.000 đ'];
         $package = $this->resolvePackageCode($packageCode);
         if(!$package)
-            return ['status'=>'error', 'message'=>'pakage not found'];
-        if($package['amount'] != $amount)
-            return ['status'=>'error', 'message'=>'amount invalid'];
+            return ['status'=>'error', 'message'=>'package not found'];
+//        if($package['amount'] != $amount)
+//            return ['status'=>'error', 'message'=>'amount invalid'];
         return ['status' => 'success'];
 
     }
@@ -227,5 +231,6 @@ class PaymentController extends BaseController
             if($aPackage['code'] == $packageCode)
                 return $aPackage;
         }
+
     }
 }

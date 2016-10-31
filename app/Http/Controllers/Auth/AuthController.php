@@ -195,6 +195,24 @@ class AuthController extends Controller
         return $this->respond(compact('token'));
     }
 
+    public function changePassword(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|alpha_num|size:value',
+        ]);
+
+
+        if ($validator->fails()) {
+            return $this->errorWithStatus($validator->errors(), [],403);
+        }
+
+        $credentials = $request->only('email', 'password');
+        $this->auth->user();
+
+        $oldPassword = $request->get("oldPassword");
+        return $this->respond(compact('token'));
+    }
+
     private function validateFacebook($email)
     {
         

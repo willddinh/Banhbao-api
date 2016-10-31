@@ -59,14 +59,15 @@ class CartController extends BaseController
 
 
     public function deleteCart(Request $request){
-        $cartId = $request->get('cartId');
+//        $cartId = $request->get('cartId');
 
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
 
         if($user){
-            $cart = Cart::query()->find($cartId);
-            if($cart->user_id != $user->id)
+            $cart = Cart::query()->where('user_id', $user->id)
+                ->where('status', Cart::STATUS_INIT);
+            if($cart->app_session != $appSession)
                 throw new BusinessException("invalid action");
             if($cart){
                 $cart->delete();
@@ -75,9 +76,9 @@ class CartController extends BaseController
 
 
         }else{
-            $cart = Cart::query()->find($cartId);
-            if($cart->app_session != $appSession)
-                throw new BusinessException("invalid action");
+            $cart = Cart::query()->where('app_session', $appSession)
+                ->where('status', Cart::STATUS_INIT);
+
 
             if($cart){
                 $cart->delete();

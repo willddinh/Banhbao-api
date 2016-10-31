@@ -7,6 +7,7 @@ return [
           ['code'=>"152.3", 'amount'=>300000, "product_name"=>"Nạp 300.000 đ vào tài khoản"],
           ['code'=>"152.4", 'amount'=>400000, "product_name"=>"Nạp 400.000 đ vào tài khoản"],
           ['code'=>"152.5", 'amount'=>500000, "product_name"=>"Nạp 500.000 đ vào tài khoản"],
+          ['code'=>"152.0", 'amount'=>0, "product_name"=>"Nạp tiền vào tài khoản"],
           
       ],
       "pay_gate"=>[

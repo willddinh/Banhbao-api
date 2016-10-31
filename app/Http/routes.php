@@ -80,6 +80,8 @@ $api->version('v1', function ($api) {
             'as' => 'dump.index',
             'uses' => 'App\Http\Controllers\DumpController@index',
         ]);
+        //authentication
+        $api->post('changepassword', 'App\Http\Controllers\Auth\AuthController@changePassword');
         //payment
 
         $api->post('payment/pay', [
