@@ -37,6 +37,7 @@ class CartController extends BaseController
     public function cartInfo(Request $request){
         $user = $this->auth->user();
         $appSession = $request->header("app-session");
+        Log::info('user_name------------!!:'.$user->email);
         if($user){
             $cart = Cart::query()->with('items.entity.book')->where('user_id', $user->id)
                 ->where('status', Cart::STATUS_INIT)->orderBy('id', 'DESC')
