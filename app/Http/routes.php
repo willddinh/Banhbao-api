@@ -70,7 +70,9 @@ $api->version('v1', function ($api) {
     $api->post('cart/deleteCartItem','App\Http\Controllers\CartController@deleteCartItem');
     $api->post('cart/updateCartItem','App\Http\Controllers\CartController@updateCartItem');
     $api->post('cart/deleteCart','App\Http\Controllers\CartController@deleteCart');
-    $api->get('cart/cartInfo', ['uses'=>'App\Http\Controllers\CartController@cartInfo',  'middleware' => 'appSession']);
+    $api->get('cart/cartInfo', ['uses'=>'App\Http\Controllers\CartController@cartInfo'
+//        ,  'middleware' => 'appSession'
+    ]);
     
     // need authentication
     $api->group(['middleware' => 'api.auth'], function ($api) {
