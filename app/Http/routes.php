@@ -71,7 +71,7 @@ $api->version('v1', function ($api) {
     $api->post('cart/updateCartItem','App\Http\Controllers\CartController@updateCartItem');
     $api->post('cart/deleteCart','App\Http\Controllers\CartController@deleteCart');
     $api->get('cart/cartInfo', ['uses'=>'App\Http\Controllers\CartController@cartInfo'
-//        ,  'middleware' => 'appSession'
+        ,  'middleware' => 'appSession'
     ]);
     
     // need authentication
