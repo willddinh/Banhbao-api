@@ -210,8 +210,9 @@ class AuthController extends Controller
             return $this->errorWithStatus(['message'=>'password and confirmPassword is not match'], [],403);
 
         $user = $this->auth->user();
-        $oldHashPassword =\Hash::make($request->input('oldPassword'));
-        if($user->password != $oldHashPassword)
+        $credentials = ['email'=>$user->email, 'password'=>$request->input('oldPassword')];
+        $isUser = $this->auth->attempt($credentials);
+        if(!$isUser)
             return $this->errorWithStatus(['message'=>'old password is not match'], [],403);
 
         $user->password = \Hash::make($request->input('password'));
