@@ -14,6 +14,10 @@ return [
     | Supported: "smtp", "mail", "sendmail", "mailgun", "mandrill", "log"
     |
     */
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+    ],
 
     'driver' => env('MAIL_DRIVER', 'smtp'),
 
@@ -54,7 +58,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'yu.li@lyyw.info', 'name' => 'liyu'],
+    'from' => ['address' => 'support@banhbao.io', 'name' => 'support'],
 
     /*
     |--------------------------------------------------------------------------

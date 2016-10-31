@@ -40,6 +40,7 @@ class_alias('Illuminate\Support\Facades\Request', 'Request');
  $app->configure('fully');
 $app->configure('elasticsearch');
 $app->configure('payment');
+//$app->configure('mail');
 
 
 

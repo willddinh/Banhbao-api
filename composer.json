@@ -21,7 +21,8 @@
         "vluzrmos/lumen-cors": "2.1.*",
         "cviebrock/laravel-elasticsearch": "^1.2",
         "league/flysystem": " ~1.0",
-        "nesbot/carbon": "^1.21"
+        "nesbot/carbon": "^1.21",
+        "illuminate/mail" : "5.2.45"
 
     },
     "require-dev": {

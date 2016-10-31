@@ -52,6 +52,7 @@ $api->version('v1', function ($api) {
     $api->post('facebook', 'App\Http\Controllers\Auth\AuthController@facebook');
     $api->post('login', 'App\Http\Controllers\Auth\AuthController@login');
     $api->post('token/refresh', 'App\Http\Controllers\Auth\AuthController@refreshToken');
+    $api->post('resetpassword', 'App\Http\Controllers\Auth\AuthController@resetPassword');
     //for web ui
     
     $api->get('ui/menu/{group}','App\Http\Controllers\WebUIController@menu');

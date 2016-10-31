@@ -18,6 +18,7 @@ use Illuminate\Auth\AuthManager;
 
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Lumen\Routing\Controller;
 use League\Flysystem\Exception;
@@ -217,6 +218,34 @@ class AuthController extends Controller
 
         $user->password = \Hash::make($request->input('password'));
         $user->save();
+        return $this->respond(['message'=>'ok']);
+
+    }
+
+    public function resetPassword(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorWithStatus($validator->errors(), [],403);
+        }
+
+        $user = User::query()->where('email',$request->get('email'))->first();
+
+        if(!$user)
+            return $this->errorWithStatus(['message'=>'user does not exist'], [],403);
+
+        $newPass = generateRandomString(10);
+        $user->password = \Hash::make($newPass);
+        $user->save();
+
+        Mail::send('emails.reset_pass', ['user' => $user, 'password'=>$newPass], function ($m) use ($user) {
+            $m->from('support@banhbao.io', 'Banhbao');
+
+            $m->to($user->email, $user->name)->subject('Banh bao - new password!');
+        });
+
         return $this->respond(['message'=>'ok']);
 
     }
