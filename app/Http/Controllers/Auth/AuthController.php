@@ -197,20 +197,27 @@ class AuthController extends Controller
 
     public function changePassword(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|alpha_num|size:value',
+            'password' => 'required|alpha_num|min:6',
+            'confirmPassword' => 'required|alpha_num|min:6',
+            'oldPassword' => 'required',
         ]);
-
 
         if ($validator->fails()) {
             return $this->errorWithStatus($validator->errors(), [],403);
         }
 
-        $credentials = $request->only('email', 'password');
-        $this->auth->user();
+        if($request->get('password') != $request->get('confirmPassword'))
+            return $this->errorWithStatus(['message'=>'password and confirmPassword is not match'], [],403);
 
-        $oldPassword = $request->get("oldPassword");
-        return $this->respond(compact('token'));
+        $user = $this->auth->user();
+        $oldHashPassword =\Hash::make($request->input('oldPassword'));
+        if($user->password != $oldHashPassword)
+            return $this->errorWithStatus(['message'=>'old password is not match'], [],403);
+
+        $user->password = \Hash::make($request->input('password'));
+        $user->save();
+        return $this->respond(['message'=>'ok']);
+
     }
 
     private function validateFacebook($email)
