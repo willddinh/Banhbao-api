@@ -39,7 +39,7 @@ class CartController extends BaseController
         $appSession = $request->header("app-session");
         if($user){
             $cart = Cart::query()->with('items.entity.book')->where('user_id', $user->id)
-                ->where('status', Cart::STATUS_INIT)
+                ->where('status', Cart::STATUS_INIT)->orderBy('id', 'DESC')
                 ->first();
             if(!$cart)
                 throw new BusinessException("Not found");
